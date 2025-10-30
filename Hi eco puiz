@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>🌱 생태·환경 퀴즈</title>
+  <style>
+    /* ====== 기본 레이아웃 ====== */
+    body {
+      font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+      background: linear-gradient(135deg, #d0f0c0, #a8e6cf);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .quiz-container {
+      background: #fff;
+      width: 90%;
+      max-width: 600px;
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: 0.3s ease;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #2e7d32;
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button.option {
+      background-color: #e8f5e9;
+      border: 2px solid #81c784;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button.option:hover {
+      background-color: #c8e6c9;
+    }
+
+    .next-btn {
+      margin-top: 25px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .next-btn:hover {
+      background-color: #388e3c;
+    }
+
+    .result {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>🌿 생태·환경 퀴즈</h1>
+    <div id="quiz">
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <button class="next-btn" id="nextBtn">다음</button>
+    </div>
+    <div id="result" class="hidden"></div>
+    <footer>© 2025 EcoQuiz Project</footer>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "1️⃣ 지구 평균 기온 상승의 주요 원인은 무엇일까요?",
+        options: ["자연적인 태양 활동", "인간의 온실가스 배출", "지구의 공전 궤도 변화", "화산 폭발"],
+        answer: 1
+      },
+      {
+        question: "2️⃣ 플라스틱이 바다에 미치는 영향으로 옳지 않은 것은?",
+        options: ["해양 생물의 생존을 위협한다", "미세플라스틱으로 분해되어 먹이사슬에 들어간다", "바다의 염분을 낮춘다", "환경 오염을 유발한다"],
+        answer: 2
+      },
+      {
+        question: "3️⃣ 탄소중립(넷제로)이란?",
+        options: ["모든 에너지를 태양광으로 바꾸는 것", "배출한 탄소를 상쇄하여 순배출을 0으로 만드는 것", "탄소 배출을 완전히 금지하는 것", "탄소를 모아 저장하는 기술"],
+        answer: 1
+      },
+      {
+        question: "4️⃣ 다음 중 재생 가능 에너지가 아닌 것은?",
+        options: ["태양광", "풍력", "석탄", "수력"],
+        answer: 2
+      },
+      {
+        question: "5️⃣ 열대우림이 ‘지구의 허파’라 불리는 이유는?",
+        options: ["산소를 많이 생산하기 때문", "이산화탄소를 방출하기 때문", "기온을 높이기 때문", "인간이 많이 거주하기 때문"],
+        answer: 0
+      },
+      {
+        question: "6️⃣ 다음 중 생물다양성을 위협하는 행동은?",
+        options: ["서식지 파괴", "야생동물 보호", "쓰레기 분리수거", "국립공원 지정"],
+        answer: 0
+      },
+      {
+        question: "7️⃣ 온실가스의 주성분으로 올바른 것은?",
+        options: ["산소", "이산화탄소", "질소", "아르곤"],
+        answer: 1
+      },
+      {
+        question: "8️⃣ 지구 온난화로 인해 일어날 수 있는 현상이 아닌 것은?",
+        options: ["해수면 상승", "빙하 감소", "생물 다양성 증가", "이상 기후"],
+        answer: 2
+      },
+      {
+        question: "9️⃣ 일회용품 사용을 줄이기 위한 가장 효과적인 방법은?",
+        options: ["재활용 쓰레기 늘리기", "재사용 가능한 제품 사용", "분리배출 안 하기", "더 많은 일회용품 생산"],
+        answer: 1
+      },
+      {
+        question: "🔟 ‘제로웨이스트(Zero Waste)’의 의미는?",
+        options: ["쓰레기를 최소화하고 자원을 재활용하는 생활 방식", "모든 쓰레기를 소각하는 것", "음식을 남기지 않는 식습관", "전기를 아끼는 습관"],
+        answer: 0
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("nextBtn");
+    const resultEl = document.getElementById("result");
+    const quizEl = document.getElementById("quiz");
+
+    function loadQuestion() {
+      const currentQuiz = quizData[currentQuestion];
+      questionEl.textContent = currentQuiz.question;
+      optionsEl.innerHTML = "";
+
+      currentQuiz.options.forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.classList.add("option");
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(index);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(selected) {
+      const correct = quizData[currentQuestion].answer;
+      const optionButtons = document.querySelectorAll(".option");
+      optionButtons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === correct) btn.style.backgroundColor = "#c8e6c9";
+        if (i === selected && i !== correct) btn.style.backgroundColor = "#ffcdd2";
+      });
+
+      if (selected === correct) score++;
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    function showResult() {
+      quizEl.classList.add("hidden");
+      resultEl.classList.remove("hidden");
+      resultEl.innerHTML = `
+        <div class="result">
+          🎉 퀴즈 완료! <br>
+          당신의 점수는 <strong>${score} / ${quizData.length}</strong> 입니다.
+        </div>
+        <button class="next-btn" onclick="restartQuiz()">다시 하기</button>
+      `;
+    }
+
+    function restartQuiz() {
+      score = 0;
+      currentQuestion = 0;
+      quizEl.classList.remove("hidden");
+      resultEl.classList.add("hidden");
+      loadQuestion();
+    }
+
+    // 시작 시 첫 문제 불러오기
+    loadQuestion();
+  </script>
+</body>
+</html>
